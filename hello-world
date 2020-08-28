@@ -1,0 +1,146 @@
+Hola mundo
+ Lectura de 10 minutos
+Introducción
+¿Qué es GitHub?
+Crear un repositorio
+Crear una sucursal
+Hacer un compromiso
+Abrir una solicitud de extracción
+Solicitud de extracción de mezcla
+
+El proyecto Hello World es una tradición histórica en la programación informática. Es un ejercicio simple que te pone en marcha cuando aprendes algo nuevo. ¡Comencemos con GitHub!
+
+Aprenderás a:
+
+Crear y utilizar un repositorio
+Iniciar y administrar una nueva sucursal
+Realice cambios en un archivo e insértelos a GitHub como confirmaciones
+Abrir y combinar una solicitud de extracción
+
+¿Qué es GitHub?
+GitHub es una plataforma de hospedaje de código para el control de versiones y la colaboración. Le permite a usted y a otros trabajar juntos en proyectos desde cualquier lugar.
+
+Este tutorial le enseña elementos esenciales de GitHub como repositorios, ramas, confirmacionesy solicitudes de extracción. Creará su propio repositorio Hello World y aprenderá el flujo de trabajo de solicitud de extracción de GitHub, una forma popular de crear y revisar código.
+
+No es necesario codificar
+Para completar este tutorial, necesita una cuenta GitHub.com y acceso a Internet. No es necesario saber cómo codificar, usar la línea de comandos o instalar Git (el software de control de versiones GitHub está integrado).
+
+Consejo: Abra esta guía en una ventana (o pestaña) del explorador independiente para que pueda verla mientras completa los pasos del tutorial.
+
+
+Paso 1. Crear un repositorio
+Un repositorio se utiliza normalmente para organizar un único proyecto. Los repositorios pueden contener carpetas y archivos, imágenes, vídeos, hojas de cálculo y conjuntos de datos, lo que necesite su proyecto. Se recomienda incluir un archivo READMEo un archivo con información sobre su proyecto. GitHub facilita la adición de uno al mismo tiempo que crea el nuevo repositorio. También ofrece otras opciones comunes, como un archivo de licencia.
+
+Su repositorio puede ser un lugar donde almacena ideas, recursos o incluso comparte y discute cosas con otros.hello-world
+
+Para crear un nuevo repositorio
+En la esquina superior derecha, junto a tu avatar o icono, haz clic y selecciona Nuevo repositorio.
+Asigne un nombre al repositorio .hello-world
+Escriba una breve descripción.
+Seleccione Inicializar este repositorio con un archivo README.
+new-repo-form
+
+Haga clic en Crear repositorio.
+
+
+Paso 2. Crear una sucursal
+La bifurcación es la forma de trabajar en diferentes versiones de un repositorio a la vez.
+
+De forma predeterminada, el repositorio tiene una rama con el nombre que se considera la rama definitiva. Utilizamos ramas para experimentar y hacer ediciones antes de comprometerlas a .mainmain
+
+Cuando se crea una rama fuera de la rama, se realiza una copia, o instantánea, de como era en ese momento. Si otra persona realizaba cambios en la rama mientras trabajabas en tu sucursal, podrías extraer esas actualizaciones.mainmainmain
+
+Este diagrama muestra:
+
+La ramamain
+Una nueva rama llamada (porque estamos haciendo 'trabajo de características' en esta rama)feature
+El viaje que se realiza antes de fusionarse en featuremain
+a branch
+
+¿Alguna vez has guardado diferentes versiones de un archivo? Algo así como:
+
+story.txt
+story-joe-edit.txt
+story-joe-edit-reviewed.txt
+Las sucursales logran objetivos similares en repositorios de GitHub.
+
+Aquí en GitHub, nuestros desarrolladores, escritores y diseñadores usan ramas para mantener las correcciones de errores y el trabajo de características separados de nuestra rama (de producción). Cuando un cambio está listo, fusionan su rama en .mainmain
+
+Para crear una nueva rama
+Vaya a su nuevo repositorio .hello-world
+Haga clic en el menú desplegable en la parte superior de la lista de archivos que dice rama: main.
+Escriba un nombre de rama, , en el nuevo cuadro de texto de bifurcación.readme-edits
+Seleccione el cuadro azul Crear rama o pulse "Enter" en el teclado.
+branch gif
+
+Ahora tienes dos ramas, y . ¡Se ven exactamente iguales, pero no por mucho tiempo! A continuación, agregaremos nuestros cambios a la nueva rama.mainreadme-edits
+
+
+Paso 3. Realizar y confirmar cambios
+¡Bravo! Ahora, está en la vista de código de la rama, que es una copia de . Vamos a hacer algunas ediciones.readme-editsmain
+
+En GitHub, los cambios guardados se denominan confirmaciones. Cada confirmación tiene un mensaje de confirmaciónasociado, que es una descripción que explica por qué se realizó un cambio determinado. Los mensajes de confirmación capturan el historial de los cambios, para que otros colaboradores puedan comprender lo que ha hecho y por qué.
+
+Realizar y confirmar cambios
+Haga clic en el archivo.README.md
+Haga clic en el icono de lápiz en la esquina superior derecha de la vista de archivo para editarlo.
+En el editor, escribe un poco sobre ti mismo.
+Escriba un mensaje de confirmación que describa los cambios.
+Haga clic en el botón Confirmar cambios.
+commit
+
+Estos cambios se realizarán solo en el archivo README de la rama, por lo que ahora esta rama contiene contenido diferente de .readme-editsmain
+
+
+Paso 4. Abrir una solicitud de extracción
+¡Buenas ediciones! Ahora que tiene cambios en una rama fuera de , puede abrir una solicitud de extracción.main
+
+Las solicitudes de extracción son el corazón de la colaboración en GitHub. Cuando abre una solicitud de incorporación de cambios,propone los cambios y solicita que alguien revise y extraiga su contribución y las fusione en su sucursal. Las solicitudes de extracción muestran diferencias o diferenciasdel contenido de ambas ramas. Los cambios, adiciones y restas se muestran en verde y rojo.
+
+Tan pronto como realice una confirmación, puede abrir una solicitud de extracción e iniciar una discusión, incluso antes de que finalice el código.
+
+Mediante el uso del sistema de @mention de GitHub en el mensaje de solicitud de extracción, puede solicitar comentarios de personas o equipos específicos, ya sea que estén al final del pasillo o a 10 zonas horarias de distancia.
+
+Incluso puede abrir solicitudes de extracción en su propio repositorio y combinarlas usted mismo. Es una excelente manera de aprender el flujo de GitHub antes de trabajar en proyectos más grandes.
+
+Abra una solicitud de extracción para realizar cambios en el archivo README
+Haga clic en la imagen para una versión más grande
+
+Paso	Captura
+Haga clic en la ficha Solicitud de extracción y, a continuación, en la página Solicitud de extracción, haga clic en el botón verde Nueva solicitud de extracción.	pr-tab
+En el cuadro Comparaciones de ejemplo, seleccione la rama que ha realizado, , para compararla con (la original).readme-editsmain	branch
+Mira los cambios en los diffs de la página Comparar, asegúrate de que sean los que quieres enviar.	diff
+Cuando esté satisfecho de que estos son los cambios que desea enviar, haga clic en el botón verde grande Crear solicitud de extracción.	create-pull
+Asigne un título a su solicitud de extracción y escriba una breve descripción de los cambios.	pr-form
+Cuando haya terminado con el mensaje, haga clic en Crear solicitud de extracción!
+
+Consejo:Puede utilizar emoji y arrastrar y soltar imágenes y gifs en comentarios y solicitudes de extracción.
+
+
+Paso 5. Combine su solicitud de extracción
+En este último paso, es hora de reunir los cambios, fusionando la rama en la rama.readme-editsmain
+
+Haga clic en el botón verde Combinar solicitud de extracción para combinar los cambios en .main
+Haga clic en Confirmar combinación.
+Siga adelante y elimine la rama, ya que sus cambios se han incorporado, con el botón Eliminar rama en el cuadro púrpura.
+merge delete
+
+¡Celebrar!
+Al completar este tutorial, ha aprendido a crear un proyecto y realizar una solicitud de extracción en GitHub!
+
+Esto es lo que ha logrado en este tutorial:
+
+Creado un repositorio de código abierto
+Empezó y gestionó una nueva sucursal
+Se ha cambiado un archivo y se confirmaron esos cambios en GitHub
+Abrió y fusionó una solicitud de extracción
+Echa un vistazo a tu perfil de GitHub y verás tus nuevos cuadrados de contribución!
+
+Para obtener más información sobre la potencia de las solicitudes de extracción, se recomienda leer la Guía de flujo de GitHub. También puede visitar GitHub Explore y participar en un proyecto de código abierto.
+
+Consejo:Echa un vistazo a nuestras otras guías, canal de YouTube y entrenamiento bajo demanda para obtener más información sobre cómo empezar a usar GitHub.
+
+Actualizado por última vez el 24 de julio de 2020
+
+GitHub es la mejor manera de crear y enviar software.
+Potente colaboración, revisión de código y administración de código para proyectos privados y de código abierto.
