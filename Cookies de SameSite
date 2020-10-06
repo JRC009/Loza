@@ -1,0 +1,163 @@
+Explicación de las cookies de SameSite
+Asegure su sitio aprendiendo a marcar explícitamente sus cookies entre sitios.
+
+7 de mayo de 2019 • actualizado28 de mayo de 2020
+Aparece en: Seguro y protegido
+Rowan Merewood
+Rowan Merewood
+Gorjeo 
+GitHub 
+Falla 
+Para obtener consejos de implementación sobre SameSite=None, consulte la parte 2: Recetas de cookies de SameSite
+
+Las cookies son uno de los métodos disponibles para agregar un estado persistente a los sitios web. A lo largo de los años, sus capacidades han crecido y evolucionado, pero dejaron la plataforma con algunos problemas heredados problemáticos. Para solucionar este problema, los navegadores (incluidos Chrome, Firefox y Edge) están cambiando su comportamiento para imponer más valores predeterminados que preserven la privacidad.
+
+Cada cookie es un key=valuepar junto con una serie de atributos que controlan cuándo y dónde se usa esa cookie. Probablemente ya haya usado estos atributos para establecer cosas como fechas de vencimiento o indicar que la cookie solo debe enviarse a través de HTTPS. Los servidores establecen cookies enviando el Set-Cookieencabezado con el nombre adecuado en su respuesta. Para conocer todos los detalles, puede sumergirse en RFC6265bis , pero por ahora aquí hay un repaso rápido.
+
+Supongamos que tiene un blog en el que desea mostrar una promoción de "Novedades" a sus usuarios. Los usuarios pueden descartar la promoción y luego no la volverán a ver por un tiempo. Puede almacenar esa preferencia en una cookie, configurarla para que caduque en un mes (2,600,000 segundos) y solo enviarla por HTTPS. Ese encabezado se vería así:
+
+
+Set-Cookie: promo_shown=1; Max-Age=2600000; Secure
+Tres cookies enviadas a un navegador desde un servidor en una respuesta
+Los servidores establecen cookies usando el Set-Cookieencabezado.
+Cuando su lector ve una página que cumple con esos requisitos, es decir, está en una conexión segura y la cookie tiene menos de un mes, entonces su navegador enviará este encabezado en su solicitud:
+
+
+Cookie: promo_shown=1
+Tres cookies enviadas desde un navegador a un servidor en una solicitud
+Su navegador envía cookies de nuevo en el Cookieencabezado.
+También puede agregar y leer las cookies disponibles para ese sitio en JavaScript usando document.cookie. Al hacer una asignación, document.cookiese creará o anulará una cookie con esa clave. Por ejemplo, puede probar lo siguiente en la consola JavaScript de su navegador:
+
+
+> document.cookie = "promo_shown=1; Max-Age=2600000; Secure"
+< "promo_shown=1; Max-Age=2600000; Secure"
+La lectura document.cookiegenerará todas las cookies accesibles en el contexto actual, con cada cookie separada por un punto y coma:
+
+
+> document.cookie;
+< "promo_shown=1; color_theme=peachpuff; sidebar_loc=left"
+JavaScript que accede a las cookies dentro del navegador
+JavaScript puede acceder a las cookies mediante document.cookie.
+Si prueba esto en una selección de sitios populares, notará que la mayoría de ellos establecen significativamente más de tres cookies. En la mayoría de los casos, esas cookies se envían en cada solicitud a ese dominio, lo que tiene una serie de implicaciones. El ancho de banda de carga suele estar más restringido que la descarga para sus usuarios, por lo que la sobrecarga en todas las solicitudes salientes agrega un retraso en su tiempo hasta el primer byte. Sea conservador en la cantidad y tamaño de las cookies que configure. Utilice el Max-Ageatributo para asegurarse de que las cookies no permanezcan más tiempo del necesario.
+
+¿Qué son las cookies propias y de terceros? #
+Si vuelve a la misma selección de sitios que estaba viendo antes, probablemente notó que había cookies presentes para una variedad de dominios, no solo el que estaba visitando actualmente. Las cookies que coinciden con el dominio del sitio actual, es decir, lo que se muestra en la barra de direcciones del navegador, se les conoce como first-party cookies. Del mismo modo, las cookies de dominios distintos del sitio actual se denominan cookies de terceros . Esta no es una etiqueta absoluta, pero es relativa al contexto del usuario; la misma cookie puede ser propia o de terceros, según el sitio en el que se encuentre el usuario en ese momento.
+
+Se envían tres cookies a un navegador desde diferentes solicitudes en la misma página
+Las cookies pueden provenir de una variedad de dominios diferentes en una página.
+Continuando con el ejemplo anterior, digamos que una de las publicaciones de su blog tiene una imagen de un gato particularmente asombroso y está alojada en /blog/img/amazing-cat.png. Debido a que es una imagen tan sorprendente, otra persona la usa directamente en su sitio. Si un visitante ha estado en su blog y tiene la promo_showncookie, entonces cuando vea amazing-cat.pngen el sitio de la otra persona, esa cookie se enviará en esa solicitud de imagen. Esto no es particularmente útil para nadie, ya promo_shownque no se usa para nada en el sitio de esta otra persona, solo agrega gastos generales a la solicitud.
+
+Si ese es un efecto no deseado, ¿por qué querrías hacer esto? Es este mecanismo el que permite que los sitios mantengan el estado cuando se utilizan en un contexto de terceros. Por ejemplo, si inserta un video de YouTube en su sitio, los visitantes verán la opción "Ver más tarde" en el reproductor. Si su visitante ya ha iniciado sesión en YouTube, esa sesión estará disponible en el reproductor integrado mediante una cookie de terceros, lo que significa que el botón "Ver más tarde" simplemente guardará el video de una vez en lugar de pedirle que inicie sesión o tener que navegar fuera de su página y volver a YouTube.
+
+Se envía la misma cookie en tres contextos diferentes
+Se envía una cookie en un contexto de terceros al visitar diferentes páginas.
+Una de las propiedades culturales de la web es que tiende a estar abierta de forma predeterminada. Esto es parte de lo que ha hecho posible que muchas personas creen allí su propio contenido y aplicaciones. Sin embargo, esto también ha generado una serie de problemas de seguridad y privacidad. Los ataques de falsificación de solicitudes entre sitios (CSRF) se basan en el hecho de que las cookies se adjuntan a cualquier solicitud a un origen determinado, sin importar quién inicie la solicitud. Por ejemplo, si lo visita evil.example, puede generar solicitudes your-blog.exampley su navegador adjuntará con gusto las cookies asociadas. Si su blog no tiene cuidado con la forma en que valida esas solicitudes, evil.examplepodría desencadenar acciones como eliminar publicaciones o agregar su propio contenido.
+
+Los usuarios también son cada vez más conscientes de cómo se pueden utilizar las cookies para rastrear su actividad en varios sitios. Sin embargo, hasta ahora no ha habido una forma de indicar explícitamente su intención con la cookie. Su promo_showncookie solo debe enviarse en un contexto de primera parte, mientras que una cookie de sesión para un widget destinado a ser incrustado en otros sitios está allí intencionalmente para proporcionar el estado de inicio de sesión en un contexto de terceros.
+
+Indique explícitamente el uso de cookies con el SameSiteatributo #
+La introducción del SameSiteatributo (definido en RFC6265bis ) le permite declarar si su cookie debe restringirse a un contexto propio o del mismo sitio. Es útil comprender exactamente qué significa "sitio" aquí. El sitio es la combinación del sufijo de dominio y la parte del dominio justo antes de él. Por ejemplo, el www.web.devdominio es parte del web.devsitio.
+
+Término clave:
+
+Si el usuario está conectado www.web.devy solicita una imagen, static.web.deventonces es una solicitud del mismo sitio .
+
+La lista de sufijos públicos define esto, por lo que no se trata solo de dominios de nivel superior como, .comsino que también incluye servicios como github.io. Que permite your-project.github.ioy my-project.github.iopara contar como sitios separados.
+
+Término clave:
+
+Si el usuario está activado your-project.github.ioy solicita una imagen, se my-project.github.iotrata de una solicitud entre sitios .
+
+La introducción del SameSiteatributo en una cookie proporciona tres formas diferentes de controlar este comportamiento. Puede optar por no especificar el atributo, o puede utilizar Stricto Laxlimitar la cookie a solicitudes del mismo sitio.
+
+Si se establece SameSiteque Strict, la cookie sólo se enviará en un contexto de cookies. En términos de usuario, la cookie solo se enviará si el sitio de la cookie coincide con el sitio que se muestra actualmente en la barra de URL del navegador. Entonces, si la promo_showncookie se configura de la siguiente manera:
+
+
+Set-Cookie: promo_shown=1; SameSite=Strict
+Cuando el usuario está en su sitio, la cookie se enviará con la solicitud como se esperaba. Sin embargo, al seguir un enlace a su sitio, digamos desde otro sitio o mediante un correo electrónico de un amigo, en esa solicitud inicial no se enviará la cookie. Esto es bueno cuando tiene cookies relacionadas con la funcionalidad que siempre estarán detrás de una navegación inicial, como cambiar una contraseña o realizar una compra, pero es demasiado restrictiva para promo_shown. Si su lector sigue el enlace al sitio, quiere que se le envíe la cookie para que se pueda aplicar su preferencia.
+
+Ahí es donde SameSite=Laxentra en juego al permitir que la cookie se envíe con estas navegaciones de nivel superior. Repasemos el ejemplo del artículo sobre gatos de arriba, donde otro sitio hace referencia a su contenido. Hacen uso de su foto del gato directamente y proporcionan un enlace a su artículo original.
+
+
+<p>Look at this amazing cat!</p>
+<img src="https://blog.example/blog/img/amazing-cat.png" />
+<p>Read the <a href="https://blog.example/blog/cat.html">article</a>.</p>
+Y la cookie se ha configurado así:
+
+
+Set-Cookie: promo_shown=1; SameSite=Lax
+Cuando el lector está en el blog de la otra persona, la cookie no se enviará cuando el navegador lo solicite amazing-cat.png. Sin embargo, cuando el lector sigue el enlace a cat.htmlen su blog, esa solicitud incluirá la cookie. Esto es Laxuna buena opción para las cookies que afectan la visualización del sitio y que Strictson útiles para las cookies relacionadas con las acciones que está tomando su usuario.
+
+Precaución:
+
+Ni Stricttampoco Laxson una solución completa para la seguridad de su sitio. Las cookies se envían como parte de la solicitud del usuario y debe tratarlas de la misma manera que cualquier otra entrada del usuario. Eso significa desinfectar y validar la entrada. Nunca use una cookie para almacenar datos que considere un secreto del lado del servidor.
+
+Finalmente existe la opción de no especificar el valor que ha sido anteriormente la forma de indicar implícitamente que se quiere que la cookie sea enviada en todos los contextos. En el último borrador de RFC6265bis esto se hace explícito al introducir un nuevo valor de SameSite=None. Esto significa que puede usar Nonepara comunicar claramente que desea que la cookie se envíe intencionalmente en un contexto de terceros.
+
+Tres cookies etiquetadas como Ninguna, Laxa o Estricta según su contexto
+Marcan explícitamente el contexto de una galleta como None, Laxo Strict.
+Si proporciona un servicio que otros sitios consumen, como widgets, contenido incrustado, programas de afiliados, publicidad o inicio de sesión en varios sitios, debe usarlo Nonepara asegurarse de que su intención sea clara.
+
+Cambios en el comportamiento predeterminado sin SameSite #
+Si bien el SameSiteatributo es ampliamente compatible, desafortunadamente no ha sido adoptado ampliamente por los desarrolladores. El valor predeterminado abierto de enviar cookies a todas partes significa que todos los casos de uso funcionan, pero deja al usuario vulnerable a CSRF y a la fuga de información no intencional. Para alentar a los desarrolladores a manifestar su intención y brindarles a los usuarios una experiencia más segura, la propuesta de IETF, Incrementally Better Cookies, presenta dos cambios clave:
+
+Las cookies sin un SameSiteatributo se tratarán como SameSite=Lax.
+Las cookies con SameSite=Nonetambién deben especificar Secure, lo que significa que requieren un contexto seguro.
+Chrome implementa este comportamiento predeterminado a partir de la versión 84. Firefox los tiene disponibles para probar a partir de Firefox 69 y los convertirá en comportamientos predeterminados en el futuro. Para probar estos comportamientos en Firefox, abra about:configy configure network.cookie.sameSite.laxByDefault. Edge también planea cambiar sus comportamientos predeterminados.
+
+Este artículo se actualizará a medida que los navegadores adicionales anuncien su compatibilidad.
+
+SameSite=Laxpor defecto #
+Sin conjunto de atributos
+
+
+Set-Cookie: promo_shown=1
+Si envía una cookie sin ningún SameSiteatributo especificado ...
+
+Se aplicó el comportamiento predeterminado
+
+
+Set-Cookie: promo_shown=1; SameSite=Lax
+El navegador tratará esa cookie como si SameSite=Laxestuviera especificada.
+
+Si bien esto está destinado a aplicar un valor predeterminado más seguro, lo ideal es establecer un SameSiteatributo explícito en lugar de confiar en que el navegador lo aplique por usted. Esto hace que su intención para la cookie sea explícita y mejora las posibilidades de una experiencia consistente en todos los navegadores.
+
+Precaución:
+
+El comportamiento predeterminado que aplica Chrome es un poco más permisivo que explícito, SameSite=Laxya que permitirá que se envíen determinadas cookies en las solicitudes POST de nivel superior. Puede ver los detalles exactos en el anuncio de blink-dev . Esto está pensado como una mitigación temporal, aún debe estar arreglando sus cookies entre sitios para usar SameSite=None; Secure.
+
+SameSite=Nonedebe ser seguro #
+Rechazado
+
+
+Set-Cookie: widget_session=abc123; SameSite=None
+Establecer una cookie sin Secure será rechazado .
+
+Aceptado
+
+
+Set-Cookie: widget_session=abc123; SameSite=None; Secure
+Debe asegurarse de emparejarse SameSite=Nonecon el Secureatributo.
+
+Puede probar este comportamiento a partir de Chrome 76 habilitando chrome://flags/#cookies-without-same-site-must-be-securey desde Firefox 69 en about:configconfigurando network.cookie.sameSite.noneRequiresSecure.
+
+Deberá aplicar esto al configurar nuevas cookies y actualizar activamente las cookies existentes incluso si no se acercan a su fecha de caducidad.
+
+Si confía en algún servicio que brinde contenido de terceros en su sitio, también debe verificar con el proveedor que están actualizando sus servicios. Es posible que deba actualizar sus dependencias o fragmentos para asegurarse de que su sitio recoja el nuevo comportamiento.
+
+Ambos cambios son compatibles con versiones anteriores de los navegadores que han implementado correctamente la versión anterior del SameSiteatributo, o simplemente no lo admiten en absoluto. Al aplicar estos cambios a sus cookies, está haciendo explícito su uso previsto en lugar de confiar en el comportamiento predeterminado del navegador. Del mismo modo, cualquier cliente que aún no reconozca SameSite=Nonedebe ignorarlo y continuar como si el atributo no estuviera configurado.
+
+Advertencia:
+
+Varias versiones anteriores de navegadores, incluidos Chrome, Safari y UC, son incompatibles con el nuevo Noneatributo y pueden ignorar o restringir la cookie. Este comportamiento está arreglado en las versiones actuales, pero debe verificar su tráfico para determinar qué proporción de sus usuarios se ven afectados. Puede ver la lista de clientes incompatibles conocidos en el sitio de Chromium .
+
+SameSiterecetas de galletas #
+Para obtener más detalles sobre cómo actualizar exactamente sus cookies para manejar con éxito estos cambios SameSite=Noney la diferencia en el comportamiento del navegador, diríjase al artículo de seguimiento, Recetas de cookies de SameSite .
+
+Agradecimientos por las contribuciones y comentarios de Lily Chen, Malte Ubl, Mike West, Rob Dodson, Tom Steiner y Vivek Sekhar
+
+Imagen del héroe de la galleta de Pille-Riin Priske en Unsplash
+
+Seguridad
+Galletas
+Última actualización: 28 de mayo de 2020 Mejorar artículo
